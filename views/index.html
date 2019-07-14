@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>To Do List</title>
+    <link rel="stylesheet" href="./public/style.css" type="text/css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Literata&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <h1><%= kindOfDay %></h1>
+  <div class="container">
+    <ul>
+      <% newListItems.forEasch(item => { %>
+      <li><%= item %></li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <body></body>
+</html>
