@@ -28,8 +28,14 @@ const ItemSchema = {
   name: String,
 };
 
+const listSchema = {
+  name: String,
+  items: [ItemSchema],
+};
+
 // MODEL
 const Item = mongoose.model('Item', ItemSchema);
+const List = mongoose.model('List', listSchema);
 
 const item1 = new Item({
   name: 'Go to Work',
@@ -48,7 +54,6 @@ const item3 = new Item({
 //* ***************//
 
 const defaultItems = [item1, item2, item3];
-const workItems = [];
 
 app.get('/', (req, res) => {
   Item.find({}, (err, foundItems) => {
@@ -91,8 +96,29 @@ app.post('/delete', (req, res) => {
   });
 });
 
-app.get('/work', (req, res) => {
-  res.render('list', { listTitle: 'Work List', newListItems: workItems });
+app.get('/:customListName', (req, res) => {
+  const { customListName } = req.params;
+
+  // Find if there is an existing data
+  List.findOne({ name: customListName }, (err, foundList) => {
+    if (!err) {
+      if (!foundList) {
+        // Create a new list
+        const list = new List({
+          name: customListName,
+          items: defaultItems,
+        });
+        list.save();
+        res.redirect(`/${customListName}`);
+      } else {
+        // show an existing list
+        res.render('list', {
+          listTitle: foundList.name,
+          newListItems: foundList.items,
+        });
+      }
+    }
+  });
 });
 
 app.post('/work', (req, res) => {
