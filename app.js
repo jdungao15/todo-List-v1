@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const _ = require('lodash');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -87,19 +88,32 @@ app.post('/', (req, res) => {
 
 app.post('/delete', (req, res) => {
   const deletedItemId = req.body.deletedItem;
+  const { listName } = req.body;
 
-  Item.findByIdAndRemove(deletedItemId, err => {
-    if (!err) {
-      console.log('Item successfully deleted!');
-      res.redirect('/');
-    }
-  });
+  if (listName === 'Today') {
+    Item.findByIdAndRemove(deletedItemId, err => {
+      if (!err) {
+        console.log('Item successfully deleted!');
+        res.redirect('/');
+      }
+    });
+  } else {
+    List.findOneAndUpdate(
+      { name: listName },
+      { $pull: { items: { _id: deletedItemId } } },
+      (err, foundList) => {
+        if (!err) {
+          res.redirect(`/${listName}`);
+        }
+      }
+    );
+  }
 });
 
 app.get('/:customListName', (req, res) => {
-  const { customListName } = req.params;
+  const customListName = _.capitalize(req.params.customListName);
 
-  // Find if there is an existing data
+  // Find if there is an existing datanam
   List.findOne({ name: customListName }, (err, foundList) => {
     if (!err) {
       if (!foundList) {

@@ -1,4 +1,5 @@
 {
     "editor.formatOnSave": true,
-    "prettier.semi": true
+    "prettier.semi": true,
+    "git.ignoreLimitWarning": true
 }
